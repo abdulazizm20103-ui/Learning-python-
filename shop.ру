@@ -1,0 +1,81 @@
+class Product:
+    def __init__(self, name, price, quantity, category):
+        self.name = name
+        self.price = price
+        self.quantity = quantity
+        self.category = category
+
+    def total_value(self):
+        return self.price * self.quantity
+
+    def info(self):
+        print(f"Название: {self.name}")
+        print(f"Цена: {self.price}")
+        print(f"Количество: {self.quantity}")
+        print(f"Категория: {self.category}")
+        print(f"Общая стоимость: {self.total_value()}")
+        print("----------------------")
+
+
+
+class Shop:
+    def __init__(self):
+        self.products = []
+
+    def add_product(self, product):
+        self.products.append(product)
+        print("Товар добавлен")
+
+    def remove_product(self, name):
+        for product in self.products:
+            if product.name == name:
+                self.products.remove(product)
+                print("Товар удалён")
+                return
+        print("товар не найден")
+
+    def show_all(self):
+        if not self.products:
+            print("Склад пуст")
+        for product in self.products:
+            product.info()
+
+    def total_sum(self):
+        total = 0
+        for product in self.products:
+            total += product.total_value()
+        return total
+
+
+
+shop = Shop()
+
+while True:
+    print("\n1-добавить 2-удалить 3-показать 4-сумма 5-выход")
+    a = input("Выбор: ")
+
+    if a == "1":
+        name = input("Название: ")
+        price = float(input("Цена: "))
+        quantity = int(input("Количество: "))
+        category = input("Категория: ")
+
+        product = Product(name, price, quantity, category)
+        shop.add_product(product)
+
+    elif a == "2":
+        name = input("Удалить: ")
+        shop.remove_product(name)
+
+    elif a == "3":
+        shop.show_all()
+
+    elif a == "4":
+        print("Сумма склада:", shop.total_sum())
+
+    elif a == "5":
+        print("Выход...")
+        break
+
+    else:
+        print("Неверный выбор")
