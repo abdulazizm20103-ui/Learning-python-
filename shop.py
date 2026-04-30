@@ -6,7 +6,6 @@ class Shop:
         self.conn = sqlite3.connect("shop.db")
         self.cursor = self.conn.cursor()
 
-
         self.cursor.execute("""
             CREATE TABLE IF NOT EXISTS products (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -27,12 +26,13 @@ class Shop:
         print("Товар добавлен")
 
     def remove_product(self, name):
-        self.cursor.execute(
-            "DELETE FROM products WHERE name = ?",
-            (name,)
-        )
-        self.conn.commit()
-        print("Если товар был — он удалён")
+        self.cursor.execute("SELECT * FROM products WHERE name = ?", (name,))
+        if self.cursor.fetchone():
+            self.cursor.execute("DELETE FROM products WHERE name = ?", (name,))
+            self.conn.commit()
+            print("Товар удалён")
+        else:
+            print("Товар не найден")
 
     def show_all(self):
         self.cursor.execute("SELECT name, price, quantity, category FROM products")
@@ -54,11 +54,8 @@ class Shop:
             print("----------------------")
 
     def total_sum(self):
-        self.cursor.execute(
-            "SELECT SUM(price * quantity) FROM products"
-        )
+        self.cursor.execute("SELECT SUM(price * quantity) FROM products")
         result = self.cursor.fetchone()[0]
-
         return result if result else 0
 
     def find_by_category(self, category):
@@ -77,8 +74,6 @@ class Shop:
 
     def close(self):
         self.conn.close()
-
-
 
 
 shop = Shop()
@@ -106,14 +101,13 @@ while True:
         print("Сумма склада:", shop.total_sum())
 
     elif a == "5":
-      category = input("Введите категорию: ")
-      shop.find_by_category (category)
-
+        category = input("Введите категорию: ")
+        shop.find_by_category(category)
 
     elif a == "6":
-      shop.close()
-      print("Выход...")
-      break
+        shop.close()
+        print("Выход...")
+        break
 
     else:
         print("Неверный выбор")
